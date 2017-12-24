@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Text;
 using ExcelDataReader;
 using fastJSON;
@@ -37,19 +38,22 @@ namespace Saturn72.FileConverters
 
             using (var excelReader = CreateExcelDataReader(sourceExtension, stream))
             {
-                if(!excelReader.Read())
-                    return new byte[]{};
+                if (!excelReader.Read())
+                    return new byte[] { };
 
                 var columNamesAndIndexes = GetColumnNamesAndIndexes(excelReader);
-                var jsonArray = new List<IDictionary<string, string>>();
+                var jsonArray = new List<IDictionary<string, object>>();
 
                 while (excelReader.Read())
                 {
-                    var jsonArrayItem = new Dictionary<string, string>();
+                    var jsonArrayItem = new Dictionary<string, object>();
+
+
                     foreach (var cnni in columNamesAndIndexes)
                     {
-                        var key = ToJsonString(cnni.Key);
-                        var value = ToJsonString(excelReader.GetString(cnni.Value));
+                        var key = ToJsonConvertFunc(typeof(string))(cnni.Key) as string;
+                        var valueType = excelReader.GetFieldType(cnni.Value);
+                        var value = ToJsonConvertFunc(valueType)(excelReader.GetValue(cnni.Value));
                         jsonArrayItem[key] = value;
 
                     }
@@ -61,12 +65,30 @@ namespace Saturn72.FileConverters
             }
         }
 
-        protected static string ToJsonString(string source)
+        protected static Func<object, object> ToJsonConvertFunc(Type t) =>t == null ? obj => string.Empty : ToJsonDictionary.First(x => x.Key.Contains(t)).Value;
+
+        protected static readonly IDictionary<IEnumerable<Type>, Func<object, object>> ToJsonDictionary = new Dictionary<IEnumerable<Type>, Func<object, object>>
         {
-            return source?.Replace(@"\", @"\\")
-                .Replace(@"'", @"\'")
-                .Replace("\"", "\\\"") ?? string.Empty;
-        }
+            {
+                new []{typeof(string), typeof(char)},
+                str => (str as string)?.Replace(@"\", @"\\")
+                           .Replace(@"'", @"\'")
+                           .Replace("\"", "\\\"") ?? string.Empty
+            },
+            {
+                new[]{typeof(bool), typeof(byte),}, b=> System.Convert.ToBoolean(b)
+            },
+            {
+                new[]{typeof(DateTime),
+                    typeof(decimal),
+                    typeof(double),
+                    typeof(float),
+                    typeof(Guid),
+                    typeof(short),
+                    typeof(int),
+                    typeof(long)}, d=>d
+            },
+        };
 
 
         #region consts

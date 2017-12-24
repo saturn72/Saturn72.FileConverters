@@ -12,8 +12,9 @@ namespace Saturn72.FileConverters.Tests
         #region consts
 
         private const string SomeDataExpectedJson =
-            "[{\"A\":\"1_1\",\"B\":\"1_2\",\"C\":\"1_3\",\"D\":\"1_4\"},{\"A\":\"2_1\",\"B\":\"2_2\",\"C\":\"\",\"D\":\"2_4\"},{\"A\":\"3_1\",\"B\":\"3_2\",\"C\":\"3_3\",\"D\":\"3_4\"},{\"A\":\"\",\"B\":\"4_2\",\"C\":\"4_3\",\"D\":\"4_4\"},{\"A\":\"5_1\",\"B\":\"\",\"C\":\"5_3\",\"D\":\"5_4\"},{\"A\":\"6_1\",\"B\":\"6_2\",\"C\":\"6_3\",\"D\":\"6_4\"},{\"A\":\"7_1\",\"B\":\"7_2\",\"C\":\"\",\"D\":\"7_4\"}]";
+            "[{\"A\":1.1,\"B\":1,\"C\":\"1_3\",\"D\":\"1_4\"},{\"A\":2.1,\"B\":2,\"C\":\"\",\"D\":\"2_4\"},{\"A\":3.1,\"B\":3,\"C\":\"3_3\",\"D\":\"3_4\"},{\"A\":\"\",\"B\":4,\"C\":\"4_3\",\"D\":\"4_4\"},{\"A\":5.1,\"B\":\"\",\"C\":\"5_3\",\"D\":\"5_4\"},{\"A\":6.1,\"B\":6,\"C\":\"6_3\",\"D\":\"6_4\"},{\"A\":7.1,\"B\":7,\"C\":\"\",\"D\":\"7_4\"}]";
         #endregion
+     
         #region SuppotedConversions
         [Fact]
         public void ExcelToJsonFileConverter_SupportedConversions()
@@ -97,9 +98,9 @@ namespace Saturn72.FileConverters.Tests
 
         public class ExcelToJsonFileConverterTestObject : ExcelToJsonFileConverter
         {
-            public static string GetJsonString(String source)
+            public static string GetJsonString(string source)
             {
-                return ToJsonString(source);
+                return ToJsonConvertFunc(typeof(string))(source) as string;
             }
         }
         #endregion
