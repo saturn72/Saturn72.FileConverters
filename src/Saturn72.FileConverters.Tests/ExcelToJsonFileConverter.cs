@@ -12,7 +12,7 @@ namespace Saturn72.FileConverters.Tests
         #region consts
 
         private const string SomeDataExpectedJson =
-            "[{\"String\":\"One\",\"Boolean\":true,\"C\":\"1_3\",\"D\":\"1_4\"},{\"String\":\"Two\",\"Boolean\":false,\"C\":\"\",\"D\":\"2_4\"},{\"String\":\"Three\",\"Boolean\":true,\"C\":\"3_3\",\"D\":\"3_4\"},{\"String\":\"\",\"Boolean\":\"\",\"C\":\"4_3\",\"D\":\"4_4\"},{\"String\":\"Five\",\"Boolean\":false,\"C\":\"5_3\",\"D\":\"5_4\"}]";
+            "[{\"String\":\"One\",\"Boolean\":1,\"Byte\":\"0000\",\"D\":\"1_4\"},{\"String\":\"Two\",\"Boolean\":0,\"Byte\":\"0001\",\"D\":\"2_4\"},{\"String\":\"Three\",\"Boolean\":1,\"Byte\":\"0010\",\"D\":\"3_4\"},{\"String\":\"\",\"Boolean\":\"\",\"Byte\":\"\",\"D\":\"4_4\"},{\"String\":\"Five\",\"Boolean\":0,\"Byte\":\"0011\",\"D\":\"5_4\"}]";
         #endregion
      
         #region SuppotedConversions
