@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using fastJSON;
 using Saturn72.Extensions;
 
@@ -15,13 +14,15 @@ namespace Saturn72.FileConverters
 
         private const string CsvExtension = "csv";
         private const string JsonExtension = "json";
+        private const char Qualifier = '\\';
+        private static readonly string QualifierString = new string(new[] { Qualifier });
 
         #endregion
 
         #region Static members
 
         private static readonly IEnumerable<FileConversionData> _supportedConversions = new[]
-        {
+            {
             new FileConversionData(CsvExtension, JsonExtension),
         };
 
@@ -53,21 +54,18 @@ namespace Saturn72.FileConverters
                 {
                     var jsonValues = CsvLineToArray(curLine, delimiter);
                     var jsonArrayItem = new Dictionary<string, object>();
-                    for (int i = 0; i < headers.Count(); i++)
+                    for (var i = 0; i < headers.Count(); i++)
                         jsonArrayItem[headers.ElementAt(i)] = ToJsonObject(jsonValues.ElementAt(i));
                     jsonArray.Add(jsonArrayItem);
                 }
 
                 var json = JSON.ToJSON(jsonArray);
-                return Encoding.UTF8.GetBytes(json);
+                return Encoding.ASCII.GetBytes(json);
             }
         }
 
         private object ToJsonObject(string value)
         {
-            if (value.Length == 1 && char.TryParse(value, out char chrRes))
-                return chrRes;
-
             if (bool.TryParse(value, out bool boolRes))
                 return boolRes;
 
@@ -91,13 +89,34 @@ namespace Saturn72.FileConverters
 
             if (DateTime.TryParse(value, out DateTime dateTimeRes))
                 return dateTimeRes;
-
-            return value;
+            if (char.TryParse(value, out char chrRes))
+                return chrRes;
+            return value.Replace(QualifierString, string.Empty);
         }
 
         private static IEnumerable<string> CsvLineToArray(string line, char delimiter)
         {
-            return line.Split(delimiter).Select(h => h.Trim()).ToArray();
+            var result = new List<string>();
+            var wordStartIndex = 0;
+            var charBefore = default(char);
+
+            for (var curCharIndex = 0; curCharIndex < line.Length; curCharIndex++)
+            {
+                var curChar = line[curCharIndex];
+                if (curCharIndex == line.Length-1 ||
+                    (curChar == delimiter && charBefore != default(char) && charBefore != Qualifier))
+                {
+                    var onLastWorkAddition = curCharIndex == line.Length - 1 ? 1 : 0;
+                    var value = line
+                        .Substring(wordStartIndex, curCharIndex - wordStartIndex + onLastWorkAddition)
+                        .Trim();
+                    result.Add(value);
+                    wordStartIndex = curCharIndex + 1;
+                    continue;
+                }
+                charBefore = curChar;
+            }
+            return result;
         }
 
         #region Utilities

@@ -14,7 +14,7 @@ namespace Saturn72.FileConverters.Tests
         private const string ResourceFolder = "CsvResources";
 
         private const string SomeDataExpectedJson =
-            "[{\"SKU\":1, \"Name\":\"Name_1\", \"Description\":\"description with \\\"qualifier - 1\\\' \\\"\", \"Price\":1.1, \"Available\":true},{\"SKU\":2, \"Name\":\"Name_2\", \"Description\":\"description with \\\"qualifier - 2\\\' \\\"\", \"Price\":2.2, \"Available\":true},{\"SKU\":3, \"Name\":\"Name_3\", \"Description\":\"description with \\\"qualifier - 3\\\' \\\"\", \"Price\":3.3, \"Available\":true},{\"SKU\":4, \"Name\":\"Name_4\", \"Description\":\"description with \\\"qualifier - 4\\\' \\\"\", \"Price\":4.4, \"Available\":true},{\"SKU\":5, \"Name\":\"Name_5\", \"Description\":\"description with \\\"qualifier - 5\\\' \\\"\", \"Price\":5.5, \"Available\":true},{\"SKU\":6, \"Name\":\"Name_6\", \"Description\":\"description with \\\"qualifier - 6\\\' \\\"\", \"Price\":6.6, \"Available\":true}]";
+            "[{\"SKU\":1,\"Name\":\"Name_1\",\"Description\":\"description with, \\\"qualifier - 1\' \\\"\",\"Price\":1.1,\"Available\":true},{\"SKU\":2,\"Name\":\"Name_2\",\"Description\":\"description with, \\\"qualifier - 2\' \\\"\",\"Price\":2.2,\"Available\":true},{\"SKU\":3,\"Name\":\"Name_3\",\"Description\":\"description with, \\\"qualifier - 3\' \\\"\",\"Price\":3.3,\"Available\":false},{\"SKU\":4,\"Name\":\"Name_4\",\"Description\":\"description with, \\\"qualifier - 4\' \\\"\",\"Price\":4.4,\"Available\":true},{\"SKU\":5,\"Name\":\"Name_5\",\"Description\":\"description with, \\\"qualifier - 5\' \\\"\",\"Price\":5.5,\"Available\":false},{\"SKU\":6,\"Name\":\"Name_6\",\"Description\":\"description with, \\\"qualifier - 6\' \\\"\",\"Price\":6.6,\"Available\":true}]";
         #endregion
 
         #region SuppotedConversions
@@ -70,7 +70,7 @@ namespace Saturn72.FileConverters.Tests
             var c2jc = new CsvToJsonFileConverter();
             var delimiter = fileName.IndexOf("tab", StringComparison.InvariantCultureIgnoreCase) > 0 ? '\t' : ',';
             var converted = c2jc.Convert(extension, "json", bytes, new {@delimiter = delimiter});
-            var actualJson = Encoding.UTF8.GetString(converted);
+            var actualJson = Encoding.ASCII.GetString(converted);
             actualJson.ShouldBe(SomeDataExpectedJson);
         }
 
