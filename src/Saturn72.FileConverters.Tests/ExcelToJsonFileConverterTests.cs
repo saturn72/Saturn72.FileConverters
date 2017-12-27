@@ -11,10 +11,15 @@ namespace Saturn72.FileConverters.Tests
     {
         #region consts
 
+        private const string ResourceFolder = "ExcelResources";
+        private const string XlsExtension = "xls";
+        private const string XlsxExtension = "xlsx";
+        private const string JsonExtension = "json";
+
         private const string SomeDataExpectedJson =
             "[{\"String\":\"One\",\"Boolean\":1,\"Byte\":\"0000\",\"D\":\"1_4\"},{\"String\":\"Two\",\"Boolean\":0,\"Byte\":\"0001\",\"D\":\"2_4\"},{\"String\":\"Three\",\"Boolean\":1,\"Byte\":\"0010\",\"D\":\"3_4\"},{\"String\":\"\",\"Boolean\":\"\",\"Byte\":\"\",\"D\":\"4_4\"},{\"String\":\"Five\",\"Boolean\":0,\"Byte\":\"0011\",\"D\":\"5_4\"}]";
         #endregion
-     
+
         #region SuppotedConversions
         [Fact]
         public void ExcelToJsonFileConverter_SupportedConversions()
@@ -23,27 +28,32 @@ namespace Saturn72.FileConverters.Tests
             var sc = e2jc.SupportedConversions;
             sc.Count().ShouldBe(2);
 
-            sc.Any(c => c.SourceExtension == "xls" && c.DestinationExtension == "json").ShouldBeTrue();
-            sc.Any(c => c.SourceExtension == "xlsx" && c.DestinationExtension == "json").ShouldBeTrue();
+            sc.Any(c => c.SourceExtension == XlsExtension && c.DestinationExtension == JsonExtension).ShouldBeTrue();
+            sc.Any(c => c.SourceExtension == XlsxExtension && c.DestinationExtension == JsonExtension).ShouldBeTrue();
         }
         #endregion
 
         #region Convert
 
-        [Fact]
-        public void ExcelToJsonFileConverter_Convert_ThrowsOnUnsupportted()
+        [Theory]
+        [InlineData(XlsExtension)]
+        [InlineData(XlsxExtension)]
+        public void ExcelToJsonFileConverter_Convert_ThrowsnOnNullByteArray(string srcExt)
         {
+            var e2jc = new ExcelToJsonFileConverter();
+            Should.Throw<NullReferenceException>(() => e2jc.Convert(srcExt, JsonExtension, null, null));
+        }
 
-            using (var ms = new MemoryStream(new byte[] { 1, 1, 0, 0 }))
-            {
-                Should.Throw<NotSupportedException>(() => new ExcelToJsonFileConverter().Convert("dadada", "json", ms));
-
-                Should.Throw<NotSupportedException>(() => new ExcelToJsonFileConverter().Convert("xls", "ss", ms));
-
-                Should.Throw<NotSupportedException>(() => new ExcelToJsonFileConverter().Convert("xlsx", "ss", ms));
-
-                Should.Throw<NotSupportedException>(() => new ExcelToJsonFileConverter().Convert("s", "ss", ms));
-            }
+        [Theory]
+        [InlineData("dadada", JsonExtension)]
+        [InlineData(XlsExtension, "ss")]
+        [InlineData(XlsxExtension, "ss")]
+        [InlineData("s", "ss")]
+        public void ExcelToJsonFileConverter_Convert_ThrowsnUnsupportted(string srcEx, string destExt)
+        {
+           //not supported
+            var e2jc = new ExcelToJsonFileConverter();
+            Should.Throw<NotSupportedException>(() => e2jc.Convert(srcEx, destExt, new byte[]{1,0,0,1}, null));
         }
 
         [Theory]
@@ -51,14 +61,11 @@ namespace Saturn72.FileConverters.Tests
         [InlineData("empty.xlsx")]
         public void ExcelToJsonFileConverter_Converts_EmptyFile(string fileName)
         {
-            var path = Path.Combine("Resources", fileName);
+            var path = Path.Combine(ResourceFolder, fileName);
             var extension = Path.GetExtension(fileName).Replace(".", "");
             var bytes = File.ReadAllBytes(path);
             var e2jc = new ExcelToJsonFileConverter();
-            using (var ms = new MemoryStream(bytes))
-            {
-                e2jc.Convert(extension, "json", ms).Count().ShouldBe(0);
-            }
+            e2jc.Convert(extension, JsonExtension, bytes, null).Count().ShouldBe(0);
         }
 
         [Theory]
@@ -66,17 +73,14 @@ namespace Saturn72.FileConverters.Tests
         [InlineData("some-data.xlsx")]
         public void ExcelToJsonFileConverter_Converts(string fileName)
         {
-            
-            var path = Path.Combine("Resources", fileName);
+
+            var path = Path.Combine(ResourceFolder, fileName);
             var extension = Path.GetExtension(fileName).Replace(".", "");
             var bytes = File.ReadAllBytes(path);
             var e2jc = new ExcelToJsonFileConverter();
-            using (var ms = new MemoryStream(bytes))
-            {
-                var converted = e2jc.Convert(extension, "json", ms);
-                var actualJson = Encoding.UTF8.GetString(converted);
-                actualJson.ShouldBe(SomeDataExpectedJson);
-            }
+            var converted = e2jc.Convert(extension, JsonExtension, bytes, null);
+            var actualJson = Encoding.UTF8.GetString(converted);
+            actualJson.ShouldBe(SomeDataExpectedJson);
         }
 
         #endregion

@@ -10,4 +10,8 @@
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\saturn72.Extensions\src\Saturn72.Extensions\Saturn72.Extensions.csproj" />
+  </ItemGroup>
+
 </Project>

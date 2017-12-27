@@ -26,10 +26,8 @@ namespace Saturn72.FileConverters
                 throw new NotSupportedException(
                     string.Format("The conversion is not supported. Source: {0} Destination: {1}", sourceFormat,
                         destinationFormat));
-            using (var ms = new MemoryStream(bytes))
-            {
-                return fileConverter.Convert(sourceFormat, destinationFormat, ms);
-            }
+            
+                return fileConverter.Convert(sourceFormat, destinationFormat, bytes, null);
         }
     }
 }

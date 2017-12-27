@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 
 namespace Saturn72.FileConverters
 {
@@ -7,7 +6,7 @@ namespace Saturn72.FileConverters
     {
         IEnumerable<FileConversionData> SupportedConversions { get; }
 
-        byte[] Convert(string sourceExtension, string destinationExtension, Stream stream);
+        byte[] Convert(string sourceExtension, string destinationExtension, byte[] bytes, object data);
 
     }
 }

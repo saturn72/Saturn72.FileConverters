@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using ExcelDataReader;
 using fastJSON;
+using Saturn72.Extensions;
 
 namespace Saturn72.FileConverters
 {
@@ -20,22 +22,24 @@ namespace Saturn72.FileConverters
 
         #endregion
 
-        private static readonly IEnumerable<FileConversionData> SupporttedConversions = new[]
+        private static readonly IEnumerable<FileConversionData> _supportedConversions = new[]
         {
             new FileConversionData(XlsExtension, JsonExtension),
             new FileConversionData(XlsxExtension, JsonExtension)
         };
 
-        public IEnumerable<FileConversionData> SupportedConversions => SupporttedConversions;
+        public IEnumerable<FileConversionData> SupportedConversions => _supportedConversions;
 
-        public byte[] Convert(string sourceExtension, string destinationExtension, Stream stream)
+        public byte[] Convert(string sourceExtension, string destinationExtension, byte[] bytes, object data)
         {
+            Guard.NotNull(bytes);
+
             if (!this.IsSupported(sourceExtension, destinationExtension))
                 throw new NotSupportedException(
                     string.Format(
                         "The required conversion is not supported (From {0} file extension sto to {1} file extension)",
                         sourceExtension, destinationExtension));
-
+            using (var stream = new MemoryStream(bytes))
             using (var excelReader = CreateExcelDataReader(sourceExtension, stream))
             {
                 if (!excelReader.Read())
@@ -65,7 +69,7 @@ namespace Saturn72.FileConverters
             }
         }
 
-        protected static Func<object, object> ToJsonConvertFunc(Type t) =>t == null ? obj => string.Empty : ToJsonDictionary.First(x => x.Key.Contains(t)).Value;
+        protected static Func<object, object> ToJsonConvertFunc(Type t) => t == null ? obj => string.Empty : ToJsonDictionary.First(x => x.Key.Contains(t)).Value;
 
         protected static readonly IDictionary<IEnumerable<Type>, Func<object, object>> ToJsonDictionary = new Dictionary<IEnumerable<Type>, Func<object, object>>
         {
@@ -117,11 +121,13 @@ namespace Saturn72.FileConverters
             return result;
         }
 
-        private static IExcelDataReader CreateExcelDataReader(string extension, Stream ms)
+        private static IExcelDataReader CreateExcelDataReader(string extension, Stream stream)
         {
+
             return extension == XlsExtension
-                ? ExcelReaderFactory.CreateBinaryReader(ms)
-                : ExcelReaderFactory.CreateOpenXmlReader(ms);
+                  ? ExcelReaderFactory.CreateBinaryReader(stream)
+                  : ExcelReaderFactory.CreateOpenXmlReader(stream);
+
         }
 
 

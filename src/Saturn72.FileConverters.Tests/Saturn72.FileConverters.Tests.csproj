@@ -16,16 +16,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Resources\empty.xls">
+    <None Update="CsvResources\empty.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\empty.xlsx">
+    <None Update="CsvResources\good-with-qualifier-tab.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\some-data.xls">
+    <None Update="ExcelResources\empty.xls">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\some-data.xlsx">
+    <None Update="ExcelResources\empty.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ExcelResources\some-data.xls">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ExcelResources\some-data.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
