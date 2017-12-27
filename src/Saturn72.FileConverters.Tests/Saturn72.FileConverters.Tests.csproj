@@ -19,6 +19,9 @@
     <None Update="CsvResources\empty.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="CsvResources\good-with-qualifier-comma.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="CsvResources\good-with-qualifier-tab.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

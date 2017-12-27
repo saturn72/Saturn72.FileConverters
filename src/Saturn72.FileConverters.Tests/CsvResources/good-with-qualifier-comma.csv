@@ -1,0 +1,7 @@
+SKU,Name,Description,Price,Available
+1,Name_1,description with \"qualifier - 1\' \",1.1,true
+2,Name_2,description with \"qualifier - 2\' \",2.2,true
+3,Name_3,description with \"qualifier - 3\' \",3.3,false
+4,Name_4,description with \"qualifier - 4\' \",4.4,true
+5,Name_5,description with \"qualifier - 5\' \",5.5,false
+6,Name_6,description with \"qualifier - 6\' \",6.6,true
