@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="ExcelDataReader" Version="3.3.0" />
-    <PackageReference Include="fastJSON" Version="2.1.27" />
+    <PackageReference Include="ServiceStack.Text" Version="5.0.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.4.0" />
   </ItemGroup>
 

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using fastJSON;
 using Saturn72.Extensions;
+using ServiceStack.Text;
 
 namespace Saturn72.FileConverters
 {
@@ -59,7 +59,7 @@ namespace Saturn72.FileConverters
                     jsonArray.Add(jsonArrayItem);
                 }
 
-                var json = JSON.ToJSON(jsonArray);
+                var json = JsonSerializer.SerializeToString(jsonArray);
                 return Encoding.ASCII.GetBytes(json);
             }
         }
